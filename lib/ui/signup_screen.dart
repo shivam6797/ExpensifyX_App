@@ -24,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   final FocusNode _dateFocusNode = FocusNode();
   final FocusNode _phoneFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -74,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                 ),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 22),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,9 +98,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                             color: Colors.grey,
                             fontFamily: "Poppins"),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 15),
                       _buildToggleButtons(),
-                      SizedBox(height: 35),
+                      SizedBox(height: 30),
                       _buildNameFields(),
                       SizedBox(height: 25),
                       _buildTextField(
@@ -112,6 +113,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                       SizedBox(height: 25),
                       _buildTextField(
                           "Set Password", Icons.lock, true, _passwordFocusNode),
+                      SizedBox(height: 25),
+                       _buildTextField(
+                          "Confirm Password", Icons.lock, true, _confirmPasswordFocusNode),    
                       SizedBox(height: 35),
                       _buildSignUpButton(),
                     ],
