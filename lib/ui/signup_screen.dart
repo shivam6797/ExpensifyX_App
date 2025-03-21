@@ -74,8 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                   minHeight: constraints.maxHeight,
                 ),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 22),
+                  padding: const EdgeInsets.symmetric(horizontal: 22),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,8 +113,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                       _buildTextField(
                           "Set Password", Icons.lock, true, _passwordFocusNode),
                       SizedBox(height: 25),
-                       _buildTextField(
-                          "Confirm Password", Icons.lock, true, _confirmPasswordFocusNode),    
+                      _buildTextField("Confirm Password", Icons.lock, true,
+                          _confirmPasswordFocusNode),
                       SizedBox(height: 35),
                       _buildSignUpButton(),
                     ],
@@ -279,8 +278,13 @@ class _SignUpScreenState extends State<SignUpScreen>
         prefixIcon: GestureDetector(
           onTap: _showCustomCountryPicker,
           child: Padding(
-            padding: EdgeInsets.all(14),
-            child: Text(countryCode, style: TextStyle(color: Colors.black)),
+            padding: EdgeInsets.all(15),
+            child: Text(countryCode,
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 14,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.bold)),
           ),
         ),
         border: OutlineInputBorder(
