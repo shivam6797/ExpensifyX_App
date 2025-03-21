@@ -18,7 +18,7 @@ ScreenShots
     <td align="center"><img src="https://github.com/user-attachments/assets/e1509be3-3ff8-4842-9e8a-da6d72a8c967" width="200" /></td>
     <td align="center"><img src="https://github.com/user-attachments/assets/ad81dbfc-5a19-4d58-879e-78e953581fbb" width="200" /></td>
     <td align="center"><img src="https://github.com/user-attachments/assets/42a5dcce-d142-4cd1-b0dc-cbea151367fb" width="200" /></td>
-    <td align="center"><img src="https://github.com/user-attachments/assets/b36fc4bb-4cdc-48f6-b8f6-ceb7a1570978" width="200" /></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/8880fc31-bc06-49dd-ad99-f0a27025fbf2" width="200" /></td>
      <td align="center"><img src="https://github.com/user-attachments/assets/61b2c861-ca17-4fbe-bfba-49ff2af645cb" width="200" /></td>
   </tr>
    <tr>
