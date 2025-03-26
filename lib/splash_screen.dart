@@ -1,4 +1,5 @@
 import 'package:ExpensifyX_App/app_routes.dart';
+import 'package:ExpensifyX_App/data/local/session_manager.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,8 +13,21 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-      Future.delayed(Duration(seconds: 3), () {
-     Navigator.pushReplacementNamed(context,AppRoutes.ROUTE_ONBOARDING);
+    checkUserSession();
+  }
+
+  void checkUserSession() async {
+  bool isLoggedIn = await SessionManager.isUserLoggedIn();
+  bool isIntroSeen = await SessionManager.isIntroSeen();
+
+  Future.delayed(Duration(seconds: 2), () {
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_MAIN); 
+    } else if (isIntroSeen) {
+      Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_LOGIN);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_ONBOARDING);
+    }
   });
   }
 

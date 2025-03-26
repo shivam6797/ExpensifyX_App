@@ -1,4 +1,5 @@
 import 'package:ExpensifyX_App/app_routes.dart';
+import 'package:ExpensifyX_App/data/local/session_manager.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreeen extends StatelessWidget {
@@ -90,7 +91,9 @@ class OnboardingScreeen extends StatelessWidget {
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async{
+                                     await SessionManager.setIntroSeen();
+                                    // ignore: use_build_context_synchronously
                                     Navigator.pushNamed(context, AppRoutes.ROUTE_LOGIN);
                                   },
                                   style: ElevatedButton.styleFrom(

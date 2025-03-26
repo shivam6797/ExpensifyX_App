@@ -1,4 +1,4 @@
-import 'package:ExpensifyX_App/db/db_helper.dart';
+import 'package:ExpensifyX_App/data/local/db_helper.dart';
 
 class CategoryModel {
   int? id;

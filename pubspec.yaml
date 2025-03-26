@@ -40,12 +40,13 @@ dependencies:
   fl_chart: ^0.62.0
   intl: ^0.18.1
   country_picker: ^2.0.19
-  pin_code_fields: ^8.0.1
   pinput: ^2.2.21
   path_provider: ^2.1.0
   flutter_bloc: ^9.1.0
   path: ^1.8.2
   sqflite: ^2.2.8+4
+  flutter_masked_text2: ^0.9.1
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

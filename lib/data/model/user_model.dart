@@ -1,16 +1,16 @@
-import 'package:ExpensifyX_App/db/db_helper.dart';
+import 'package:ExpensifyX_App/data/local/db_helper.dart';
 
 class UserModel {
   int? id;
-  String? firstName;
-  String? lastName;
-  String? email;
-  String? birthDate;
-  String? phone;
-  String? password;
+  String firstName;
+  String lastName;
+  String email;
+  String birthDate;
+  String phone;
+  String password;
   String? createdAt;
 
-  UserModel({
+  UserModel({ 
     this.id,
     required this.firstName,
     required this.lastName,
@@ -20,6 +20,18 @@ class UserModel {
     required this.password,
     this.createdAt,
   });
+
+   // Factory constructor for empty user
+  factory UserModel.empty() {
+    return UserModel( 
+      firstName: "",
+      lastName: "",
+      email: "",
+      birthDate: "",
+      phone: "",
+      password: "",
+    );
+  }
 
   /// Convert UserModel object to Map for SQLite
   Map<String, dynamic> toMap() {
@@ -47,6 +59,29 @@ class UserModel {
       phone: map[DbHelper.USER_COLUMN_PHONE],
       password: map[DbHelper.USER_COLUMN_PASSWORD],
       createdAt: map[DbHelper.USER_COLUMN_CREATED_AT],
+    );
+  }
+
+   /// CopyWith for updating specific fields
+  UserModel copyWith({
+    int? id,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? birthDate,
+    String? phone,
+    String? password,
+    String? createdAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      birthDate: birthDate ?? this.birthDate,
+      phone: phone ?? this.phone,
+      password: password ?? this.password,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

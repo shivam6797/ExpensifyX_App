@@ -1,8 +1,20 @@
+import 'package:ExpensifyX_App/data/local/db_helper.dart';
+import 'package:ExpensifyX_App/data/local/session_manager.dart';
+import 'package:ExpensifyX_App/ui/auth/login/bloc/login_bloc.dart';
+import 'package:ExpensifyX_App/ui/auth/register/bloc/register_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_routes.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+    WidgetsFlutterBinding.ensureInitialized();
+  await SessionManager.loadUserSession();
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(create:(context) => RegisterBloc(dbHelper: DbHelper.getInstance())),
+      BlocProvider(create:(context) => LoginBloc(dbHelper: DbHelper.getInstance())),
+    ],
+    child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
