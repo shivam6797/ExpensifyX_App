@@ -16,19 +16,30 @@ class _SplashScreenState extends State<SplashScreen> {
     checkUserSession();
   }
 
-  void checkUserSession() async {
-  bool isLoggedIn = await SessionManager.isUserLoggedIn();
-  bool isIntroSeen = await SessionManager.isIntroSeen();
+ void checkUserSession() async {
+    bool isLoggedIn = await SessionManager.isUserLoggedIn();
+    bool isIntroSeen = await SessionManager.isIntroSeen();
+    
+    // Load Session Data
+    await SessionManager.loadUserSession();
 
-  Future.delayed(Duration(seconds: 2), () {
-    if (isLoggedIn) {
-      Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_MAIN); 
-    } else if (isIntroSeen) {
-      Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_LOGIN);
-    } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_ONBOARDING);
-    }
-  });
+    Future.delayed(Duration(seconds: 2), () {
+      if (isLoggedIn) {
+        Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_MAIN);
+      } else if (isIntroSeen) {
+        // Remember Me Credentials Pass Kare
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.ROUTE_LOGIN,
+          arguments: {
+            "email": SessionManager.isRemembered ? SessionManager.userEmail : "",
+            "phone": SessionManager.isRemembered ? SessionManager.userPhone : "",
+          },
+        );
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.ROUTE_ONBOARDING);
+      }
+    });
   }
 
   @override

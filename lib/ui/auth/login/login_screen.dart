@@ -1,5 +1,6 @@
 import 'package:ExpensifyX_App/app_routes.dart';
 import 'package:ExpensifyX_App/data/local/db_helper.dart';
+import 'package:ExpensifyX_App/data/local/session_manager.dart';
 import 'package:ExpensifyX_App/ui/auth/login/bloc/login_bloc.dart';
 import 'package:ExpensifyX_App/ui/auth/login/bloc/login_event.dart';
 import 'package:ExpensifyX_App/ui/auth/login/bloc/login_state.dart';
@@ -32,23 +33,23 @@ class _LoginScreenState extends State<LoginScreen>
   void initState() {
     super.initState();
     context.read<LoginBloc>().add(ResetLoginState());
-    Future.delayed(Duration(seconds: 1), () {
-      final state = context.read<LoginBloc>().state;
-      print(
-          "After Reset State: ${state is LoginValidationState ? state.errors : 'No errors'}");
-    });
     DbHelper.getInstance().testQuery();
     _shakeController =
         AnimationController(duration: Duration(milliseconds: 500), vsync: this);
     _shakeAnimation = Tween<double>(begin: 0, end: 0).animate(_shakeController);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _phoneFocusNode.requestFocus();
+      context.read<LoginBloc>().add(UpdateFocusEvent());
+    });
+
     _phoneFocusNode.addListener(() {
-      setState(() {});
+      if (mounted) context.read<LoginBloc>().add(UpdateFocusEvent());
     });
     _emailFocusNode.addListener(() {
-      setState(() {});
+      if (mounted) context.read<LoginBloc>().add(UpdateFocusEvent());
     });
     _passwordFocusNode.addListener(() {
-      setState(() {});
+      if (mounted) context.read<LoginBloc>().add(UpdateFocusEvent());
     });
   }
 
@@ -71,10 +72,6 @@ class _LoginScreenState extends State<LoginScreen>
     emailController.dispose();
     passwordController.dispose();
 
-    _phoneFocusNode.removeListener(_onFocusChange);
-    _emailFocusNode.removeListener(_onFocusChange);
-    _passwordFocusNode.removeListener(_onFocusChange);
-
     _phoneFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
@@ -82,8 +79,35 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  void _onFocusChange() {
-    if (mounted) setState(() {});
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    if (args != null) {
+      emailController.text = args["email"] ?? "";
+      emailController.selection =
+          TextSelection.collapsed(offset: emailController.text.length);
+
+      phoneController.text = args["phone"] ?? "";
+      phoneController.selection =
+          TextSelection.collapsed(offset: phoneController.text.length);
+    }
+
+    //  Remember Me Checked hai to Email & Phone Fill Karo, Password Empty
+    if (SessionManager.isRemembered) {
+      emailController.text = SessionManager.userEmail;
+      emailController.selection =
+          TextSelection.collapsed(offset: emailController.text.length);
+
+      phoneController.text = SessionManager.userPhone;
+      phoneController.selection =
+          TextSelection.collapsed(offset: phoneController.text.length);
+
+      passwordController.text = ""; // Password empty
+    }
   }
 
   @override
@@ -130,6 +154,47 @@ class _LoginScreenState extends State<LoginScreen>
                         onTap: (index) {
                           setState(() {
                             _isPhoneLogin = (index == 0);
+                          });
+                          Future.delayed(Duration(milliseconds: 100), () {
+                            if (mounted) {
+                              context.read<LoginBloc>().add(UpdateFocusEvent());
+                            }
+
+                            if (_isPhoneLogin) {
+                              context.read<LoginBloc>().add(
+                                    ClearFieldErrorEvent(
+                                        field: DbHelper.USER_COLUMN_EMAIL),
+                                  );
+                              emailController.clear();
+
+                              FocusScope.of(context).unfocus();
+
+                              Future.delayed(Duration(milliseconds: 50), () {
+                                if (mounted) {
+                                  _phoneFocusNode.requestFocus();
+                                  context
+                                      .read<LoginBloc>()
+                                      .add(UpdateFocusEvent());
+                                }
+                              });
+                            } else {
+                              context.read<LoginBloc>().add(
+                                    ClearFieldErrorEvent(
+                                        field: DbHelper.USER_COLUMN_PHONE),
+                                  );
+                              phoneController.clear();
+
+                              FocusScope.of(context).unfocus();
+
+                              Future.delayed(Duration(milliseconds: 50), () {
+                                if (mounted) {
+                                  _emailFocusNode.requestFocus();
+                                  context
+                                      .read<LoginBloc>()
+                                      .add(UpdateFocusEvent());
+                                }
+                              });
+                            }
                           });
                         },
                         indicator: BoxDecoration(
@@ -194,9 +259,9 @@ class _LoginScreenState extends State<LoginScreen>
                     children: [
                       Checkbox(
                         value: rememberMe,
-                        onChanged: (value) {
+                        onChanged: (bool? value) {
                           setState(() {
-                            rememberMe = value!;
+                            rememberMe = value ?? false;
                           });
                         },
                       ),
@@ -249,9 +314,7 @@ class _LoginScreenState extends State<LoginScreen>
                 child: BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, state) {
                     print("Bloc State: $state");
-                    bool isLoading =
-                        state is LoginLoadingState;
-
+                    bool isLoading = state is LoginLoadingState;
                     return AnimatedBuilder(
                         animation: _shakeAnimation,
                         builder: (context, child) {
@@ -270,7 +333,8 @@ class _LoginScreenState extends State<LoginScreen>
                                             LoginUserEvent(
                                                 input: identifier,
                                                 password: password,
-                                                isEmail: !_isPhoneLogin),
+                                                isEmail: !_isPhoneLogin,
+                                                rememberMe: rememberMe),
                                           );
                                     },
                               style: ElevatedButton.styleFrom(
@@ -376,10 +440,6 @@ class _LoginScreenState extends State<LoginScreen>
       TextEditingController controller,
       Function(String) event,
       String? Function(LoginValidationState state) errorTextSelector) {
-    bool isFocused = focusNode.hasFocus;
-    Color borderColor = isFocused ? const Color(0xff6674d3) : Colors.black54;
-    Color iconColor = isFocused ? const Color(0xff6674d3) : Colors.black54;
-
     return BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
       String? errorText;
       if (state is LoginValidationState) {
@@ -387,13 +447,15 @@ class _LoginScreenState extends State<LoginScreen>
       } else {
         errorText = null;
       }
-
+      bool isFocused = focusNode.hasFocus;
+      Color borderColor = isFocused ? const Color(0xff6674d3) : Colors.black54;
+      Color iconColor = isFocused ? const Color(0xff6674d3) : Colors.black54;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 45, 
-            margin: EdgeInsets.only(top:5),
+            height: 45,
+            margin: EdgeInsets.only(top: 5),
             child: TextField(
               controller: controller,
               focusNode: focusNode,
@@ -433,10 +495,11 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ),
           if (errorText != null) ...[
-            const SizedBox(height:5),
+            const SizedBox(height: 5),
             Text(
               errorText,
-              style: TextStyle(color: Colors.red, fontSize: 12, fontFamily:"Poppins"),
+              style: TextStyle(
+                  color: Colors.red, fontSize: 12, fontFamily: "Poppins"),
             ),
           ],
         ],

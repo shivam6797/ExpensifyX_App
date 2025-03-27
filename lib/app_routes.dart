@@ -5,7 +5,7 @@ import 'package:ExpensifyX_App/ui/auth/register/signup_screen.dart';
 import 'package:ExpensifyX_App/ui/home_screen.dart';
 import 'package:ExpensifyX_App/ui/main_screen.dart';
 import 'package:ExpensifyX_App/ui/otp_screen.dart';
-import 'package:ExpensifyX_App/ui/profile_screen.dart';
+import 'package:ExpensifyX_App/ui/auth/profile/profile_screen.dart';
 import 'package:ExpensifyX_App/ui/statistic_screen.dart';
 import 'package:flutter/material.dart';
 

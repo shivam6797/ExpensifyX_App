@@ -6,6 +6,15 @@ class LoginInitialState extends LoginState {
    final UserModel user;
   final Map<String, String?> errors;
   LoginInitialState({required this.user,required this.errors});
+  LoginInitialState copyWith({
+    UserModel? user,
+    Map<String, String?>? errors,
+  }) {
+    return LoginInitialState(
+      user: user ?? this.user,
+      errors: errors ?? this.errors,
+    );
+  }
 }
 
 class LoginLoadingState extends LoginState {}
@@ -34,3 +43,5 @@ class LoginValidationState extends LoginState {
     );
   }
 }
+
+class FocusUpdatedState extends LoginState {} 
